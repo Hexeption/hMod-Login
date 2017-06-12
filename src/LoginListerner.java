@@ -21,22 +21,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginListerner extends PluginListener {
-
-
+    private Pattern UsernamePattern = Pattern.compile("[0-9a-zA-Z]+");
+    
     private static void setPerms(Player player) {
-
-        if (etc.getDataSource().doesPlayerExist(player.getName())) {
-            Player data = etc.getDataSource().getPlayer(player.getName());
-            player.setAdmin(data.isAdmin());
-            player.setCanModifyWorld(data.canBuild());
-            player.setCommands(data.getCommands());
-            player.setGroups(data.getGroups());
-            player.setIgnoreRestrictions(data.canIgnoreRestrictions());
-        }
+        if (!etc.getDataSource().doesPlayerExist(player.getName())) return;
+        Player data = etc.getDataSource().getPlayer(player.getName());
+        player.setAdmin(data.isAdmin());
+        player.setCanModifyWorld(data.canBuild());
+        player.setCommands(data.getCommands());
+        player.setGroups(data.getGroups());
+        player.setIgnoreRestrictions(data.canIgnoreRestrictions());
     }
 
     private static String getPassword(String password) {
-
         try {
             MessageDigest code = MessageDigest.getInstance("MD5");
             byte[] bytes = password.getBytes();
@@ -50,7 +47,6 @@ public class LoginListerner extends PluginListener {
     }
 
     private static LPlayer getPlayer(String name) {
-
         if (!Login.getPlayers().isEmpty() && Login.getPlayers().containsKey(name)) {
             return Login.getPlayers().get(name);
         }
@@ -58,19 +54,14 @@ public class LoginListerner extends PluginListener {
     }
 
     private static boolean isLogin(String name) {
-
         return getPlayer(name) != null && getPlayer(name).status > 1;
-
     }
 
     private void getInventory(Player player) {
-
         LPlayer lPlayer = getPlayer(player.getName());
         if (lPlayer != null) {
             String list = lPlayer.items;
-            if (!list.contains(":I:")) {
-                return;
-            }
+            if (!list.contains(":I:")) return;
 
             String[] items = list.split(":I:");
             String[] arrays;
@@ -88,7 +79,6 @@ public class LoginListerner extends PluginListener {
     }
 
     private void setInventory(Player player) {
-
         LPlayer lPlayer = getPlayer(player.getName());
         if (lPlayer != null) {
             Item[] items = player.getInventory().getContents().clone();
@@ -108,14 +98,11 @@ public class LoginListerner extends PluginListener {
 
     @Override
     public boolean onCommand(Player player, String[] split) {
-
         String playerName = player.getName();
         if (split[0].equalsIgnoreCase("/login")) {
             LPlayer lPlayer = getPlayer(playerName);
             if (lPlayer != null && split.length > 1) {
-                if (lPlayer.status > 1) {
-                    return true;
-                }
+                if (lPlayer.status > 1) return true;
 
                 String password = getPassword(split[1]);
                 if (password.contains(lPlayer.password.trim())) {
@@ -136,7 +123,7 @@ public class LoginListerner extends PluginListener {
             if (lPlayer != null) {
                 player.sendMessage("§cAccount \"" + playerName + "\" already!");
             } else if (split.length > 1) {
-                Matcher matcher = Pattern.compile("[0-9a-zA-Z]+").matcher(playerName);
+                Matcher matcher = usernamePattern.matcher(playerName);
                 if (playerName.length() > 16 || playerName.length() < 4) {
                     player.sendMessage("§cUsername should be 4-16 chars.");
                 } else if (matcher.find() && matcher.group() != playerName) {
@@ -161,18 +148,15 @@ public class LoginListerner extends PluginListener {
 
     @Override
     public String onLoginChecks(String user) {
-
         LPlayer player = getPlayer(user);
         if (player != null && player.status > 1) {
             player.status = 1;
         }
-
         return null;
     }
 
     @Override
     public void onLogin(Player player) {
-
         String playerName = player.getName();
 
         player.setCanModifyWorld(false);
@@ -201,7 +185,6 @@ public class LoginListerner extends PluginListener {
 
     @Override
     public void onDisconnect(Player player) {
-
         LPlayer lPlayer = getPlayer(player.getName());
         if (lPlayer != null) {
             lPlayer.status = 0;
@@ -211,41 +194,31 @@ public class LoginListerner extends PluginListener {
     //TODO: Add Chat Message
     @Override
     public boolean onBlockDestroy(Player player, Block block) {
-
         return !isLogin(player.getName());
     }
 
     @Override
     public boolean onBlockCreate(Player player, Block blockPlaced, Block blockClicked, int itemInHand) {
-
         return !isLogin(player.getName());
     }
 
     @Override
     public boolean onBlockPlace(Player player, Block blockPlaced, Block blockClicked, Item itemInHand) {
-
         return !isLogin(player.getName());
     }
 
     @Override
     public boolean onOpenInventory(Player player, Inventory inventory) {
-
         return !isLogin(player.getName());
     }
 
     @Override
     public boolean onChat(Player player, String message) {
-
         return !isLogin(player.getName());
     }
 
     @Override
     public void onPlayerMove(Player player, Location from, Location to) {
-
-        if (!isLogin(player.getName())) {
-            player.teleportTo(from);
-        }
+        if (!isLogin(player.getName())) player.teleportTo(from);
     }
-
-
 }

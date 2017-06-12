@@ -24,27 +24,20 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class Login extends Plugin {
-
     private static final Logger logger = Logger.getLogger("Minecraft");
-
     private static HashMap<String, LPlayer> players = new HashMap<>();
-
-
     public static HashMap<String, LPlayer> getPlayers() {
-
         return players;
     }
 
     public static void save() {
-
         File folder = new File("Accounts");
         if ((!folder.exists()) && (!folder.mkdir())) {
             logger.info("[Login] Failed to create the 'Account' Folder");
         }
         File file = new File("Accounts/Accounts.hex");
-        if (file.exists()) {
-            file.delete();
-        }
+        if (file.exists()) file.delete();
+
         FileWriter gWriter;
         try {
             if (!file.createNewFile()) {
@@ -68,7 +61,6 @@ public class Login extends Plugin {
 
     @Override
     public void enable() {
-
         logger.info("[Login] Enabled");
 
         logger.info("[Login] Loading Accounts");
@@ -106,11 +98,8 @@ public class Login extends Plugin {
 
     @Override
     public void disable() {
-
         logger.info("[Login] Disabled");
-
         save();
-
         for (Player player : etc.getServer().getPlayerList()) {
             player.kick("§c[Login] Reloading");
         }
