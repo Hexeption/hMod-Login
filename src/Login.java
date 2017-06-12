@@ -70,34 +70,35 @@ public class Login extends Plugin {
         logger.info("[Login] Enabled");
 
         logger.info("[Login] Loading Accounts");
-        save();
-        File file = new File("Accounts/Accounts.hex");
-        if (!file.exists()) {
-            logger.info("[Login] Failed to load 'Accounts.hex'");
-        }
 
-        Scanner scanner;
-        try {
-            scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if (line.contains(":A:")) {
-                    String[] data = line.split(":A:");
-                    if (data.length > 2) {
-                        LPlayer lPlayer = new LPlayer(data[1].trim());
-                        if (data.length == 3 && data[2].length() > 4) {
-                            lPlayer.items = data[2];
+        File file = new File("Accounts/Accounts.hex");
+        if (file.exists()) {
+            Scanner scanner;
+            try {
+                scanner = new Scanner(file);
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    if (line.contains(":A:")) {
+                        String[] data = line.split(":A:");
+                        if (data.length > 2) {
+                            LPlayer lPlayer = new LPlayer(data[1].trim());
+                            if (data.length == 3 && data[2].length() > 4) {
+                                lPlayer.items = data[2];
+                            }
+                            players.put(data[0].trim(), lPlayer);
                         }
-                        players.put(data[0].trim(), lPlayer);
                     }
                 }
-            }
-            logger.info("[Login] Loaded Accounts Successfully");
-            scanner.close();
-        } catch (FileNotFoundException e) {
-            logger.info("[Login] Failed to load Accounts");
-            e.printStackTrace();
+                logger.info("[Login] Loaded Accounts Successfully");
+                scanner.close();
+            } catch (FileNotFoundException e) {
+                logger.info("[Login] Failed to load Accounts");
+                e.printStackTrace();
 
+            }
+
+        } else {
+            logger.info("[Login] Failed to load 'Accounts.hex'");
         }
 
     }
