@@ -16,7 +16,6 @@
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,22 +42,22 @@ public class Login extends Plugin {
         File file = new File("Accounts/Accounts.hex");
         if (file.exists()) file.delete();
 
-        FileWriter gWriter;
+        FileWriter fileWriter;
         try {
             if (!file.createNewFile()) {
                 logger.info("[Login] Save Error - Create File");
             }
-            gWriter = new FileWriter(file);
+            fileWriter = new FileWriter(file);
             if (!players.isEmpty()) {
                 for (String name : players.keySet()) {
                     LPlayer lPlayer = players.get(name);
                     String account = name + ":A:" + lPlayer.password + ":A:" + lPlayer.items;
 
-                    gWriter.flush();
-                    gWriter.write(account + "\r\n");
+                    fileWriter.flush();
+                    fileWriter.write(account + "\r\n");
                 }
             }
-            gWriter.close();
+            fileWriter.close();
         } catch (IOException e) {
             logger.info("[Login] Error Saving Account");
         }
@@ -73,28 +72,26 @@ public class Login extends Plugin {
 
         File file = new File("Accounts/Accounts.hex");
         if (file.exists()) {
-            Scanner scanner;
+            Scanner reader = null;
             try {
-                scanner = new Scanner(file);
-                while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
+                reader = new Scanner(file);
+                while (reader.hasNextLine()) {
+                    String line = reader.nextLine();
                     if (line.contains(":A:")) {
-                        String[] data = line.split(":A:");
-                        if (data.length > 2) {
-                            LPlayer lPlayer = new LPlayer(data[1].trim());
-                            if (data.length == 3 && data[2].length() > 4) {
-                                lPlayer.items = data[2];
+                        String[] split = line.split(":A:");
+                        if (split.length >= 2) {
+                            LPlayer lPlayer = new LPlayer(split[1].trim());
+                            if ((split.length == 3) && (split[2].length() > 4)) {
+                                lPlayer.items = split[2];
                             }
-                            players.put(data[0].trim(), lPlayer);
+                            players.put(split[0].trim(), lPlayer);
                         }
                     }
                 }
-                logger.info("[Login] Loaded Accounts Successfully");
-                scanner.close();
-            } catch (FileNotFoundException e) {
-                logger.info("[Login] Failed to load Accounts");
+                logger.info("[Login] Load Success");
+                reader.close();
+            } catch (IOException e) {
                 e.printStackTrace();
-
             }
 
         } else {
@@ -107,7 +104,9 @@ public class Login extends Plugin {
     public void disable() {
 
         logger.info("[Login] Disabled");
+
         save();
+
         for (Player player : etc.getServer().getPlayerList()) {
             player.kick("§c[Login] Reloading");
         }

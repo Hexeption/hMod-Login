@@ -51,7 +51,7 @@ public class LoginListerner extends PluginListener {
 
     private static LPlayer getPlayer(String name) {
 
-        if (!Login.getPlayers().isEmpty() && Login.getPlayers().containsKey(name)) {
+        if ((!Login.getPlayers().isEmpty()) && (Login.getPlayers().containsKey(name))) {
             return Login.getPlayers().get(name);
         }
         return null;
