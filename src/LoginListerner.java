@@ -132,8 +132,8 @@ public class LoginListerner extends PluginListener {
                 player.sendMessage("§cAccount \"" + playerName + "\" already!");
             } else if (split.length > 1) {
                 Matcher matcher = usernamePattern.matcher(playerName);
-                if (playerName.length() > 16 || playerName.length() < 4) {
-                    player.sendMessage("§cUsername should be 4-16 chars.");
+                if (playerName.length() > 16 || playerName.length() < 3) {
+                    player.sendMessage("§cUsername should be 3-16 chars.");
                 } else if (matcher.find() && matcher.group() != playerName) {
                     player.sendMessage("§cUsername should be [0-9 a-z A-Z]");
                 } else {
