@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 public class LoginListerner extends PluginListener {
 
-    private Pattern usernamePattern = Pattern.compile("[0-9a-zA-Z]+");
+    private Pattern usernamePattern = Pattern.compile("[0-9a-zA-Z_]+");
 
     private static void setPerms(Player player) {
 
@@ -135,7 +135,7 @@ public class LoginListerner extends PluginListener {
                 if (playerName.length() > 16 || playerName.length() < 3) {
                     player.sendMessage("§cUsername should be 3-16 chars.");
                 } else if (matcher.find() && matcher.group() != playerName) {
-                    player.sendMessage("§cUsername should be [0-9 a-z A-Z]");
+                    player.sendMessage("§cUsername should be [0-9 a-z A-Z _]");
                 } else {
                     LPlayer nPlayer = new LPlayer(getPassword(split[1].trim()));
                     nPlayer.status = 2;
